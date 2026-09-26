@@ -1,4 +1,4 @@
-🌱 Kigarama Growers SACCO
+ Kigarama Growers SACCO
 A production-ready web application and management system for Kigarama Growers SACCO, an agricultural Savings and Credit Cooperative Organization serving coffee and matooke farmers.
 
 Built with:
@@ -6,7 +6,7 @@ Built with:
 Backend: Java 17, Spring Boot 3 (Spring Web, Spring Security, Spring Data JPA), Maven
 Database: MySQL 8
 Frontend: HTML5, CSS3 (agrarian green theme), vanilla modern JavaScript (no build step, no npm required)
-📁 Project Structure
+Project Structure
 Kigarama_Growers_SACCO/
 ├── run.sh / run.bat                     # One-command start (builds + runs everything)
 ├── database/
@@ -45,26 +45,26 @@ Kigarama_Growers_SACCO/
         │   └── controller/              # REST controllers (/api/**)
         └── resources/
             ├── application.properties   # DB connection, bootstrap credentials, CORS
-            └── static/                  # ⚠️ A COPY of frontend/public — see note below
-⚠️ Important: how the frontend connects to the backend
+            └── static/                  #  A COPY of frontend/public — see note below
+Important: how the frontend connects to the backend
 The backend/src/main/resources/static/ folder is an exact copy of frontend/public/. Spring Boot automatically serves everything in src/main/resources/static as your website — so when you start the backend, the frontend is already there at http://localhost:8080. You do not need to run a separate web server for the frontend; opening frontend/public/index.html directly as a file:// URL will not work correctly (the browser blocks the API calls), so always access the app through the backend's URL.
 
 The frontend/public/ folder at the top level is provided so the frontend source is easy to find and edit on its own, and so it can be deployed separately (e.g. to Nginx or Netlify) if you ever want the frontend and backend on different servers — see "Deploying frontend and backend separately" below. If you edit anything in frontend/public/, copy your changes into backend/src/main/resources/static/ too (or just always edit the backend/.../static copy — it's the one that's actually served).
 
 All JS files load js/config.js before js/api.js. By default API_BASE_OVERRIDE is empty, meaning the frontend calls the backend using relative paths (/api/...) — this is what makes same-origin deployment (the default) work with zero configuration.
 
-⚙️ Prerequisites
+Prerequisites
 Java 17+ JDK (not just a JRE — check with javac -version)
 MySQL 8.x running locally (or reachable over the network)
 Maven is not required — the Maven Wrapper (mvnw/mvnw.cmd) downloads the correct Maven version for you automatically.
-🚀 Fastest way to run it
+Fastest way to run it
 # 1. Create/point the database credentials (see below)
 # 2. From the project root:
 ./run.sh          # Mac/Linux
 run.bat           # Windows
 Then open http://localhost:8080.
 
-🖥 Running from an IDE (IntelliJ IDEA / Eclipse / VS Code)
+Running from an IDE (IntelliJ IDEA / Eclipse / VS Code)
 The most common reason a Spring Boot project "won't run" from an IDE is that the IDE opened the folder as a plain folder instead of importing it as a Maven project, so it never downloaded the dependencies or set up the classpath. Follow these steps exactly:
 
 IntelliJ IDEA
@@ -88,7 +88,7 @@ cd backend
 mvnw.cmd spring-boot:run      # Windows
 If your IDE still won't run it: check the Problems/Errors panel for red underlines on import statements — that always means the Maven import step above didn't complete. Re-run "Reload Maven Project" / "Maven → Update Project" and wait for it to finish before hitting Run.
 
-🗄 Database Setup
+Database Setup
 Option A — let the app create it automatically (default)
 The JDBC URL in application.properties includes createDatabaseIfNotExist=true, so as long as MySQL is running and your credentials can create databases, the app creates kigarama_sacco and all its tables itself on first run.
 
@@ -98,14 +98,8 @@ Configure your credentials
 Edit backend/src/main/resources/application.properties:
 
 spring.datasource.username=root
-spring.datasource.password=root
-🔑 Default Logins
+spring.datasource.password=root Default Logins
 Created automatically on first launch:
-
-Role	Username	Password
-Super Admin	superadmin	SuperAdmin@123
-Receptionist	reception	Reception@123
-⚠️ Change these immediately in a real deployment. They're configurable ahead of first launch via sacco.bootstrap.superadmin.* / sacco.bootstrap.receptionist.* in application.properties.
 
 👥 Account Hierarchy & Workflow
 Log in as Super Admin (or Admin).
@@ -114,7 +108,7 @@ Produce Prices → set today's coffee price (per kg) and matooke prices (per bun
 Log in as Cashier → process deposits/withdrawals and log coffee/matooke intake; proceeds credit the member's account instantly.
 Log in as a Member → view live prices, produce history, deposit/withdraw, view balance (PIN required), apply for loans, submit mobile money deposits, and message anyone via Messages.
 Log in as Receptionist → check the front-desk Overview, look up members in the Member Directory, and answer messages — from anyone, not just members.
-🌍 Deploying frontend and backend separately (optional)
+Deploying frontend and backend separately (optional)
 If you want to host the frontend on a static host (Nginx, Netlify, Vercel, S3, etc.) and the backend on a different server/domain:
 
 Deploy the backend/ Spring Boot app as usual (mvnw clean package → run the resulting jar).
@@ -128,13 +122,13 @@ server.servlet.session.cookie.same-site=none
 server.servlet.session.cookie.secure=true
 This step is entirely optional — the default same-origin setup (backend serves the frontend directly) needs none of this and just works out of the box.
 
-🔐 Security Notes
+Security Notes
 Passwords and PINs are stored using BCrypt hashing — never in plaintext, and never returned in any API response (@JsonIgnore on both fields).
 Session-based authentication (HTTP-only cookies) protects all /api/** endpoints.
 Every endpoint has Spring Security method-level @PreAuthorize role checks, in addition to the UI's own role-based navigation/redirects.
 Chat is open to every role by design — anyone can message anyone (ChatService.sendMessage only blocks messaging yourself or a disabled account). If you ever want to restrict it again (e.g. back to Member ⇄ Receptionist only), that logic lives in one place: ChatService.
 Chat attachments are restricted to PDF, Word (.doc/.docx) and image files.
-🆕 New: Password Reset, Notifications, Profile Pics, Mobile Money & Loans
+New: Password Reset, Notifications, Profile Pics, Mobile Money & Loans
 Forgot password (email reset code)
 Every account now has an email (required for new accounts created via Manage Accounts). From the login page, "Forgot your password?" → enter email → a 6-digit code is emailed → enter the code + new password on the reset page. Email sending is OFF by default — until you configure real SMTP credentials, reset codes are printed to the server console log instead, so you can still test the whole flow locally. To send real emails:
 
@@ -170,10 +164,10 @@ Members can change their own PIN later via My Profile → Change Password, or by
 Receptionist dashboard: overview, prices, and a member directory
 The Receptionist's landing page is now a proper Overview — total members, unread message count, and today's coffee/matooke prices at a glance, plus a feed of recent unread messages with a one-click reply. A new Member Directory page lets them search members by name/username to pull up contact details or start a chat, without exposing any balance or financial data (that stays strictly PIN-gated to the member themselves).
 
-🎨 Design
+Design
 The UI uses a professional agrarian green palette (#1b4d3e deep forest, #2e8b57 SACCO green, #a3c1ad sage) with earth-tone accents, paired with authentic Ugandan coffee-farm and matooke-plantation imagery across the login screen and dashboard banners.
 
-🛠 Troubleshooting
+Troubleshooting
 "Unknown database" / connection refused — confirm MySQL is running and reachable at the host/port in application.properties; createDatabaseIfNotExist=true needs a MySQL user with CREATE DATABASE privileges.
 "Access denied for user" — double-check spring.datasource.username / password.
 Port 8080 already in use — change server.port in application.properties.
